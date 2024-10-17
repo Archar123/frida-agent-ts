@@ -3,19 +3,42 @@
 npm install
 ```
 
-设置自动编译
+编译,以及自动编译
 ```sh
 npm run watch
 ```
 
 运行脚本
 ```sh
-frida wechat.exe -l .\js\test.js
+frida wechat.exe -l .\test.js
 ```
 
 VSCode调试
 - 直接F5只能调试原生ts
-- 调试Frida调用的需要用chrome的DelTools工具进行的附加调试，用vscode编写TypeScript语言的Frida代码，并结合实时编译、DelTools工具自动监测脚本是否修改和Frida自动监测脚本是否修改的特性，可以达到比较理性的调试效果。
+- 调试Frida调用的需要用chrome的DelTools工具进行的附加调试.
+
+启动
 ```sh
-frida winmine.exe --debug --runtime=v8 -l .\js\test.js
+frida winmine.exe --debug --runtime=v8 -l .\test.js
+```
+
+断点
+```sh
+
+function main()
+{
+    console.log("Start");
+    //xxx
+}
+
+//导出一个函数，方便我们主动调用，进行调试。
+//DevTools里在这里下断点。然后主动调用 main() 即可断下
+//一旦import了多个模块之后，就无法直接试用main()执行了，会提示函数无法找到，此时需要用rpc.exports.main()
+
+rpc.exports = {
+    main: function () {
+        main();
+    },
+  };
+  
 ```
