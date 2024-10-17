@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "npm run build",
+    "build": "frida-compile src/index.ts -o dist/index.js -c",
+    "watch": "frida-compile src/index.ts -o dist/index.js -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
