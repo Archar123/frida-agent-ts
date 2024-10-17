@@ -2,12 +2,11 @@
   "name": "frida",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "test.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "frida-compile src/index.ts -o dist/index.js -c",
-    "watch": "frida-compile src/index.ts -o dist/index.js -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "frida-compile test.ts -o test.js -c",
+    "watch": "frida-compile test.ts -o test.js -w"
   },
   "author": "",
   "license": "ISC",
