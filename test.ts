@@ -322,19 +322,21 @@ class HookMineGame {
         for (const iterator of rangs) {
             console.log(JSON.stringify(iterator));
         }*/
-        /*
-        MemoryAccessMonitor.enable(
-            {   
-                base : this.module_winmine.base,
-                size : 0x1000
-            },
-            {
-                onAccess(details) {
-                    console.log("address", details.address, "from", details.from, "operation", details.operation, "pageIndex", details.pageIndex, "pagesCompleted", details.pagesCompleted, "pagesTotal", details.pagesTotal, "rangeIndex", details.rangeIndex);
-                    console.log("===");
-                },
-            });
-        console.log("MemoryAccessMonitor OK");*/
+        
+        // const targetRange = { base: this.module_winmine.base, size: 0x1000 };
+        // MemoryAccessMonitor.enable(
+        //     targetRange
+        //     /*{   
+        //         base : this.module_winmine.base,
+        //         size : 0x1000
+        //     }*/,
+        //     {
+        //         onAccess(details) {
+        //             console.log("address", details.address, "from", details.from, "operation", details.operation, "pageIndex", details.pageIndex, "pagesCompleted", details.pagesCompleted, "pagesTotal", details.pagesTotal, "rangeIndex", details.rangeIndex);
+        //             console.log("===");
+        //         },
+        //     });
+        // console.log("MemoryAccessMonitor OK");
 
         let pattern = "4d 5a";
         Memory.scan(this.module_winmine.base, 0x1000, pattern, {
@@ -348,6 +350,24 @@ class HookMineGame {
                 console.log("Scan Complete!");
             }
         });
+    }
+
+    api_resolver() {
+        let resolver = new ApiResolver("module");
+
+        for (const iterator of resolver.enumerateMatches("exports:*!Stringf*/i")) {
+            console.log(JSON.stringify(iterator));
+        }
+
+        for (const iterator of resolver.enumerateMatches("imports:winmine.exe!*w?r*")) {
+            console.log(JSON.stringify(iterator));
+        }
+
+        //sections没效果
+        // for (const iterator of resolver.enumerateMatches("sections:*.dll!*.text*")) {
+        //     console.log(JSON.stringify(iterator));
+        // }
+        
     }
 }
 
@@ -375,6 +395,7 @@ function main()
     //hook.hook_func();
     //hook.module_utils();
     hook.access_mon();
+    hook.api_resolver();
 
     console.log("HookMineGame End");
 }

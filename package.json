@@ -5,8 +5,12 @@
   "main": "test.ts",
   "scripts": {
     "prepare": "npm run build",
+    
     "build": "frida-compile test.ts -o test.js -c",
-    "watch": "frida-compile test.ts -o test.js -w"
+    "watch": "frida-compile test.ts -o test.js -w",
+ 
+    "build": "frida-compile android_agent/test.ts -o android_agent/test.js -c",
+    "watch": "frida-compile android_agent/test.ts -o android_agent/test.js -w"
   },
   "author": "",
   "license": "ISC",
