@@ -367,8 +367,55 @@ class HookMineGame {
         // for (const iterator of resolver.enumerateMatches("sections:*.dll!*.text*")) {
         //     console.log(JSON.stringify(iterator));
         // }
-        
     }
+}
+
+let shouldIntercept = true;
+
+class HookUtils {
+    hook() {
+        this.hook_func_inter();
+    }
+
+    unhook() {
+        shouldIntercept = false;
+    }
+
+    hook_func_inter() {
+        let address = Module.getExportByName("ws2_32.dll", "connect");
+        console.log("connect func address=", address);
+
+        let listener = Interceptor.attach(address,{
+            onEnter(this, args) {
+                var sockaddr = args[1];
+                // struct sockaddr {
+                //     ushort  sa_family;
+                //     char    sa_data[14];
+                // };
+
+                console.log("sa_family", sockaddr.readPointer());
+                console.log("sa_data", sockaddr.add(2).readPointer());
+            },
+            onLeave(this, retval) {
+                // 如果被拦截，返回错误，阻止连接
+                if (shouldIntercept) {
+                    console.log('Connection blocked!');
+                    retval.replace(new NativePointer(-1));  // 设置为 -1 表示错误，阻止连接
+                }
+                else {
+                    listener.detach();
+                    console.log('connect : unhook');
+                }   
+            }
+        })
+    }
+}
+
+let hook = new HookUtils();
+
+function exit()
+{
+    hook.unhook();
 }
 
 function main()
@@ -386,24 +433,30 @@ function main()
     game.board_location();
     game.board_click();
     console.log("AutoMineGame End");
-    */
+*/
 
+/*
     console.log("HookMineGame Start");
-
     let hook = new HookMineGame();
-    //hook.memory_utils();
-    //hook.hook_func();
-    //hook.module_utils();
+    hook.memory_utils();
+    hook.hook_func();
+    hook.module_utils();
     hook.access_mon();
     hook.api_resolver();
-
     console.log("HookMineGame End");
+*/
+
+    //测试阻塞网络
+    hook.hook();
 }
 
 //导出一个函数，方便我们主动调用，进行调试。
 rpc.exports = {
     main: function () {
         main();
+    },
+    exit: function () {
+        exit();
     },
   };
 
